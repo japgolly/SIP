@@ -95,7 +95,7 @@ final val    Vi : Int                 = 0              // constant-fold value al
 final val    Vs : Exportable.Vs.type  = Exportable.Vs  // constant-folding(?) + type equality
 val          vs : Exportable.vs.type  = Exportable.vs  // def prevents this.vs.type
 lazy val     lzs: Exportable.lvs.type = Exportable.lvs // def prevents this.lvs.type
-implicit val Ivs: Exportable.Ivs.type = Exportable.Ivs // def prevents this.vs.type
+implicit val Ivs: Exportable.Ivs.type = Exportable.Ivs // def prevents this.Ivs.type
 // plus the unconditional results (see below)
 ```
 
@@ -118,10 +118,10 @@ def          lzi                  : Int                = Exportable.lvi // .type
 def          x                    : String             = Exportable.x
 def          x_=(a: String)       : Unit               = Exportable.x = a
 def          d[A >: Null](i: Int) : A                  = Exportable.d[A](i)
-lazy val     O                    : Exportable.O.type  = Exportable.O // def prevents v.type
+lazy val     O                    : Exportable.O.type  = Exportable.O // def prevents O.type
 type         C[A <: AnyRef]                            = Exportable.C[A]
 type         CC[A <: AnyRef]                           = Exportable.CC[A]
-lazy val     CC                   : Exportable.CC.type = Exportable.CC // def prevents v.type
+lazy val     CC                   : Exportable.CC.type = Exportable.CC // def prevents CC.type
 type         T[-A]                                     = Exportable.T[A]
 type         TA[+A <: AnyRef]                          = Exportable.TA[A]
 type         IC[A <: AnyRef]                           = Exportable.IC[A]
