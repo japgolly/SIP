@@ -6,7 +6,7 @@ vote-status: Unsubmitted
 permalink: /sips/:title.html
 ---
 
-**Authors: David Barri (japgolly)**
+**Author: David Barri (japgolly)**
 
 **Supervisor and advisor: -**
 
@@ -42,6 +42,9 @@ import $1.{a => b, x => _, _ }
 
 ## Implementation
 
+This seems achievable by desugaring `export`s into normal Scala
+*(he said without proper knowledge of compiler phases and their constraints)*.
+
 Here is a demonstration of what can be exported, and how.
 Let's say you have the following object of goodies that you'd like to `export` somewhere:
 
@@ -55,8 +58,8 @@ object Exportable {
   object O { val x = 2 }
   class C[A <: AnyRef](a: A)
   case class CC[A <: AnyRef](a: A)
-  trait T[A <: AnyRef] { val x = 3 }
-  type TA[A <: AnyRef] = List[A]
+  trait T[-A] { val x = 3 }
+  type TA[+A <: AnyRef] = List[A]
   implicit class IC[A <: AnyRef](val a: A) extends AnyVal
 }
 ```
@@ -116,8 +119,8 @@ lazy val     O                    : Exportable.O.type  = Exportable.O // def pre
 type         C[A <: AnyRef]                            = Exportable.C[A]
 type         CC[A <: AnyRef]                           = Exportable.CC[A]
 lazy val     CC                   : Exportable.CC.type = Exportable.CC // def prevents v.type
-type         T[A <: AnyRef]                            = Exportable.T[A]
-type         TA[A <: AnyRef]                           = Exportable.TA[A]
+type         T[-A]                                     = Exportable.T[A]
+type         TA[+A <: AnyRef]                          = Exportable.TA[A]
 type         IC[A <: AnyRef]                           = Exportable.IC[A]
 def          IC[A <: AnyRef](a: A): IC[A]              = Exportable.IC[A](a)
 implicit def Id[A >: Null](i: Int): A                  = Exportable.Id[A](i)
@@ -149,11 +152,36 @@ trait Example {
 }
 ```
 
+Any conflicts between exports and either, existing members or other exports,
+is a compiler error in the same way as is a user creating two type aliases with the
+same name in the same scope.
+
+
+## Use Cases and Examples
+
+* Satisfying an interface mostly by delegating.
+
+  In this example there is a before and after.
+  Using `export` results in a drop from 337 to 104 LoC, a 72% reduction.
+
+  https://gist.github.com/japgolly/cb50c4773ce37ddaa190222bd008dbca
+
+* Organising packages nicely while still providing nice UX for end-users
+
+  [scalajs-react](https://github.com/japgolly/scalajs-react/blob/v1.2.0/core/src/main/scala/japgolly/scalajs/react/package.scala#L26-L41)
+
+* Creating traits for "everything that one would import" that can be used to create different flavours
+
+  [scalacss](https://github.com/japgolly/scalacss/blob/master/core/shared/src/main/scala/scalacss/defaults/Exports.scala)
+
+* Reducing boilerplate when avoiding the no-value-classes-in-traits limitation
+
+  [scalajs-react 1](https://github.com/japgolly/scalajs-react/blob/v1.2.0/scalaz-7.2/src/main/scala/japgolly/scalajs/react/internal/ScalazReactExt.scala#L59-L63)
+
+  [scalajs-react 2](https://github.com/japgolly/scalajs-react/blob/v1.2.0/scalaz-7.2/src/main/scala/japgolly/scalajs/react/internal/ScalazReactState.scala#L36-L39)
+
+
 ## Formal definition
-TODO
-
-
-## More examples
 TODO
 
 
