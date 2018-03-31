@@ -24,14 +24,16 @@ with the difference that instead of the local scope being modified, the enclosin
 be modified such that:
 
 ```scala
-object $2 { export $1.{a => b, x => _, _ } }
+object $2 {
+  export $1.{a => b, x => _, _}
+}
 import $2._
 ```
 
 is mostly equivalent to
 
 ```scala
-import $1.{a => b, x => _, _ }
+import $1.{a => b, x => _, _}
 ```
 
 "Mostly equivalent" instead of identical because:
@@ -42,10 +44,11 @@ import $1.{a => b, x => _, _ }
 
 ## Implementation
 
-This seems achievable by desugaring `export`s into normal Scala
+This seems achievable by desugaring `export`s into normal Scala,
 *(he said without proper knowledge of compiler phases and their constraints)*.
 
 Here is a demonstration of what can be exported, and how.
+
 Let's say you have the following object of goodies that you'd like to `export` somewhere:
 
 ```scala
@@ -167,18 +170,14 @@ same name in the same scope.
   https://gist.github.com/japgolly/cb50c4773ce37ddaa190222bd008dbca
 
 * Organising packages nicely while still providing nice UX for end-users
+  [(example)](https://github.com/japgolly/scalajs-react/blob/v1.2.0/core/src/main/scala/japgolly/scalajs/react/package.scala#L26-L41)
 
-  [scalajs-react](https://github.com/japgolly/scalajs-react/blob/v1.2.0/core/src/main/scala/japgolly/scalajs/react/package.scala#L26-L41)
+* Creating traits for "everything that one would import" that can be used to create different flavours.
+  [(example)](https://github.com/japgolly/scalacss/blob/master/core/shared/src/main/scala/scalacss/defaults/Exports.scala)
 
-* Creating traits for "everything that one would import" that can be used to create different flavours
-
-  [scalacss](https://github.com/japgolly/scalacss/blob/master/core/shared/src/main/scala/scalacss/defaults/Exports.scala)
-
-* Reducing boilerplate when avoiding the no-value-classes-in-traits limitation
-
-  [scalajs-react 1](https://github.com/japgolly/scalajs-react/blob/v1.2.0/scalaz-7.2/src/main/scala/japgolly/scalajs/react/internal/ScalazReactExt.scala#L59-L63)
-
-  [scalajs-react 2](https://github.com/japgolly/scalajs-react/blob/v1.2.0/scalaz-7.2/src/main/scala/japgolly/scalajs/react/internal/ScalazReactState.scala#L36-L39)
+* Reducing boilerplate when avoiding the no-value-classes-in-traits limitation.
+  [(example 1)](https://github.com/japgolly/scalajs-react/blob/v1.2.0/scalaz-7.2/src/main/scala/japgolly/scalajs/react/internal/ScalazReactExt.scala#L59-L63)
+  [(example 2)](https://github.com/japgolly/scalajs-react/blob/v1.2.0/scalaz-7.2/src/main/scala/japgolly/scalajs/react/internal/ScalazReactState.scala#L36-L39)
 
 
 ## Formal definition
